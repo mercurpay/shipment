@@ -35,17 +35,21 @@ public class StartShipmentReceiver {
 
   @PostConstruct
   public void receiveStartShipment(){
+    this.logger.info("Starting receiver...");
     final Dispatcher startShipmentDispatcher = this.connection.createDispatcher((message) -> {
       try {
+        this.logger.info("Receiving message...");
         final String messageData = new String(message.getData(), StandardCharsets.UTF_8);
         final StartShipmentEvent startShipmentEvent = this.mapper
             .readValue(messageData, StartShipmentEvent.class);
+        this.logger.info("Start shipment data {}",startShipmentEvent);
         this.shipmentService.startShipment(startShipmentEvent);
       } catch (IOException e) {
         this.logger.error(e.getMessage());
       }
     });
     startShipmentDispatcher.subscribe("start-shipment");
+    this.logger.info("Receiver started successfully");
   }
 
 }
