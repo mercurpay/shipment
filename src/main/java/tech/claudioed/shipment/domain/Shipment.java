@@ -1,6 +1,8 @@
 package tech.claudioed.shipment.domain;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import java.util.List;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -32,5 +34,8 @@ public class Shipment extends PanacheEntity {
 
   @Embedded
   private Destination destination;
+
+  @ElementCollection
+  private List<ShipmentEvent> events;
 
 }

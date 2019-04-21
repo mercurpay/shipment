@@ -1,6 +1,5 @@
 package tech.claudioed.shipment.domain;
 
-import java.time.LocalDateTime;
 import javax.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * @author claudioed on 2019-04-13.
+ * @author claudioed on 2019-04-21.
  * Project shipment
  */
 @Data
@@ -16,13 +15,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable
-public class Movement {
+public class ShipmentEvent {
 
-  private LocalDateTime at;
+  private Movement movement;
 
-  private Place from;
-
-  private Place to;
+  private String action;
 
 }
-
