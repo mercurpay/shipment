@@ -42,4 +42,8 @@ public class Shipment extends PanacheEntity {
   @OneToMany(cascade= CascadeType.ALL, fetch = FetchType.LAZY)
   private List<ShipmentEvent> events;
 
+  public ShipmentEvent firstEvent(){
+    return this.events.get(0);
+  }
+
 }
