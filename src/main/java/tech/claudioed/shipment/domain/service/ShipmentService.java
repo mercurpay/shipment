@@ -10,7 +10,8 @@ import tech.claudioed.shipment.domain.resources.data.StartShipmentEvent;
 @ApplicationScoped
 public class ShipmentService {
 
-  @Inject private ShipmentRepository shipmentRepository;
+  @Inject
+  ShipmentRepository shipmentRepository;
 
   public void startShipment(StartShipmentEvent startShipmentEvent) {
     this.shipmentRepository.create(startShipmentEvent);

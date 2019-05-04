@@ -63,7 +63,7 @@ public class JdbcShipmentRepository implements ShipmentRepository {
         .build();
     final Place to = Place.builder().country(country).city(TO_CITY).name("Distribution Center")
         .build();
-    return Arrays.asList(ShipmentEvent.builder().action("start")
+    return Arrays.asList(ShipmentEvent.builder().id(UUID.randomUUID().toString()).action("start")
         .movement(Movement.builder().at(LocalDateTime.now()).from(from).to(to).build()).build());
   }
 

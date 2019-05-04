@@ -2,10 +2,14 @@ package tech.claudioed.shipment.domain;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,7 +39,7 @@ public class Shipment extends PanacheEntity {
   @Embedded
   private Destination destination;
 
-  @ElementCollection
+  @OneToMany(cascade= CascadeType.ALL, fetch = FetchType.LAZY)
   private List<ShipmentEvent> events;
 
 }

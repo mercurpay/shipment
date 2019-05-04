@@ -13,7 +13,7 @@ import tech.claudioed.shipment.domain.service.ShipmentService;
 public class ShipmentResources {
 
   @Inject
-  private ShipmentService shipmentService;
+  ShipmentService shipmentService;
 
   @GET
   @Path("/{id}")
