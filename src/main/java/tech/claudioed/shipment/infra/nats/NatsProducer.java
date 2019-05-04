@@ -6,8 +6,11 @@ import io.nats.client.Options;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Objects;
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -57,6 +60,10 @@ public class NatsProducer {
       logger.info("Connected to Nats server on {} with user {}", this.natsHost, this.natsHost);
     }
     return this.connection;
+  }
+
+  public void executeNats(@Observes @Initialized(ApplicationScoped.class) Object init){
+    natsConnection();
   }
 
   @PreDestroy
