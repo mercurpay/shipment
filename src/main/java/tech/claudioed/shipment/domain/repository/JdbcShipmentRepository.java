@@ -33,10 +33,10 @@ public class JdbcShipmentRepository implements ShipmentRepository {
 
   @SneakyThrows
   public Shipment create(StartShipmentEvent startShipmentEvent){
-    this.logger.info("Starting shipment for order id {}",startShipmentEvent.getOrderId());
-    final Customer customerData = this.objectMapper.readValue(
-        this.objectMapper.writerWithDefaultPrettyPrinter()
-            .writeValueAsString(startShipmentEvent.getData()), Customer.class);
+    this.logger.info("Starting shipment for order {} ",startShipmentEvent);
+    this.logger.info("Customer data {}",startShipmentEvent.getData());
+    final Customer customerData = startShipmentEvent.customerData(this.objectMapper);
+    this.logger.info("Customer loaded successfully {}",customerData);
     final Destination destination = Destination.builder().address(customerData.getAddress())
         .place(Place.builder().city(customerData.getCity()).country(customerData.getCountry())
             .name("Home")
