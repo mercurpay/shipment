@@ -3,15 +3,12 @@ package tech.claudioed.shipment.infra.listener;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.nats.client.Connection;
 import io.nats.client.Dispatcher;
-import io.nats.client.Subscription;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Default;
+import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.inject.Named;
-import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import tech.claudioed.shipment.domain.resources.data.StartShipmentEvent;
 import tech.claudioed.shipment.domain.service.ShipmentService;
@@ -36,8 +33,7 @@ public class StartShipmentReceiver {
   @Inject
   Logger logger;
 
-  @PostConstruct
-  public void receiveStartShipment(){
+  public void receiveStartShipment(@Observes @Initialized(ApplicationScoped.class) Object init){
     this.logger.info("Starting receiver...");
     final Dispatcher startShipmentDispatcher = this.connection.createDispatcher((message) -> {
       try {
