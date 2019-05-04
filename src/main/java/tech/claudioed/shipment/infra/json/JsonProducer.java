@@ -2,7 +2,7 @@ package tech.claudioed.shipment.infra.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.Produces;
+import javax.enterprise.inject.Produces;
 
 /**
  * @author claudioed on 2019-04-14.
@@ -12,9 +12,8 @@ import javax.ws.rs.Produces;
 public class JsonProducer {
 
   @Produces
-  @ApplicationScoped
   public ObjectMapper objectMapper(){
-    return new ObjectMapper();
+    return ObjectMapperFactory.get();
   }
 
 }

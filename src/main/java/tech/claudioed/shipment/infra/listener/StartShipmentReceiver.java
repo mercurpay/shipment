@@ -8,11 +8,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Default;
 import javax.inject.Inject;
+import javax.inject.Named;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import tech.claudioed.shipment.domain.resources.data.StartShipmentEvent;
 import tech.claudioed.shipment.domain.service.ShipmentService;
+import tech.claudioed.shipment.infra.nats.NatsConnection;
 
 /**
  * @author claudioed on 2019-04-21.
@@ -24,7 +27,7 @@ public class StartShipmentReceiver {
   @Inject
   ShipmentService shipmentService;
 
-  @Inject
+  @Inject @NatsConnection
   Connection connection;
 
   @Inject
