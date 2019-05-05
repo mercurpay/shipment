@@ -4,12 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
-import javax.enterprise.event.ObservesAsync;
 import javax.inject.Inject;
-import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -17,7 +14,7 @@ import org.slf4j.Logger;
 import tech.claudioed.shipment.domain.Shipment;
 import tech.claudioed.shipment.infra.event.EventRequest;
 import tech.claudioed.shipment.infra.event.EventRequest.EventRequestBuilder;
-import tech.claudioed.shipment.infra.event.StartShipmentRequested;
+import tech.claudioed.shipment.infra.event.ShipmentStarted;
 
 /**
  * @author claudioed on 2019-05-04.
@@ -36,7 +33,7 @@ public class NotifyCrmShipmentStartedService {
   @Inject
   Logger logger;
 
-  public void notifyCrmStarted(@ObservesAsync @StartShipmentRequested Shipment shipment){
+  public void notifyCrmStarted(@Observes @ShipmentStarted Shipment shipment){
     this.logger.info("Starting notify CRM for orderId {}",shipment.getOrderId());
     final Map data = this.mapper.convertValue(shipment.firstEvent(), Map.class);
     final EventRequestBuilder eventStarted = EventRequest.builder()

@@ -33,6 +33,12 @@ public class NatsProducer {
   @ConfigProperty(name = "nats.host")
   String natsHost;
 
+//  @Inject @RequestShipment
+//  Event<StartShipmentEvent> trigger;
+
+//  @Inject
+//  ObjectMapper mapper;
+
   private Connection connection;
 
   @Produces
@@ -63,6 +69,29 @@ public class NatsProducer {
     natsConnection();
   }
 
+//  @Produces
+//  @SneakyThrows
+//  @ApplicationScoped
+//  @StartShipmentDispatcher
+//  public Dispatcher startShipmentDispatcher(){
+//    this.logger.info("Setting start shipment dispatcher....");
+//    final Dispatcher startShipmentDispatcher = this.connection.createDispatcher((message) -> {
+//      try {
+//        this.logger.info("Receiving message...");
+//        final String messageData = new String(message.getData(), StandardCharsets.UTF_8);
+//        final StartShipmentEvent startShipmentEvent = this.mapper
+//            .readValue(messageData, StartShipmentEvent.class);
+//        this.logger.info("Start shipment data {}",startShipmentEvent);
+//        //this.trigger.fire(startShipmentEvent);
+//      } catch (IOException e) {
+//        this.logger.error(e.getMessage());
+//      }
+//    });
+//    startShipmentDispatcher.subscribe("start-shipment");
+//    this.logger.info("Shipment dispatcher configured successfully!!!");
+//    return startShipmentDispatcher;
+//  }
+
   @PreDestroy
   @SneakyThrows
   void cleanUp(){
@@ -72,6 +101,5 @@ public class NatsProducer {
       logger.info("Nats connection closed successfully");
     }
   }
-
 
 }

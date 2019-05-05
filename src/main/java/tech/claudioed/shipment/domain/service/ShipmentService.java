@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import tech.claudioed.shipment.domain.Shipment;
 import tech.claudioed.shipment.domain.repository.ShipmentRepository;
 import tech.claudioed.shipment.domain.resources.data.StartShipmentEvent;
-import tech.claudioed.shipment.infra.event.StartShipmentRequested;
+import tech.claudioed.shipment.infra.event.ShipmentStarted;
 
 /** @author claudioed on 2019-04-14. Project shipment */
 @ApplicationScoped
@@ -15,7 +15,8 @@ public class ShipmentService {
 
   @Inject ShipmentRepository shipmentRepository;
 
-  @Inject @StartShipmentRequested Event<Shipment> trigger;
+  @Inject @ShipmentStarted
+  Event<Shipment> trigger;
 
   @Inject Logger logger;
 

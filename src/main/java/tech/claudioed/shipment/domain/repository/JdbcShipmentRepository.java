@@ -31,6 +31,9 @@ public class JdbcShipmentRepository implements ShipmentRepository {
   @Inject
   Logger logger;
 
+  @Inject
+  PanacheShipmentRepository panacheShipmentRepository;
+
   @SneakyThrows
   public Shipment create(StartShipmentEvent startShipmentEvent){
     this.logger.info("Starting shipment for order {} ",startShipmentEvent);
@@ -41,12 +44,22 @@ public class JdbcShipmentRepository implements ShipmentRepository {
         .place(Place.builder().city(customerData.getCity()).country(customerData.getCountry())
             .name("Home")
             .build()).build();
-    final Shipment shipment = Shipment.builder().id(UUID.randomUUID().toString())
-        .destination(destination).customerId(customerData.getId())
-        .orderId(startShipmentEvent.getOrderId()).events(startEvent(customerData.getCountry())).build();
-    shipment.persist();
-    this.logger.info("Shipment event processed successfully for order id {} shipment id {}",
-        startShipmentEvent.getOrderId(),shipment.getId());
+    final Shipment shipment =
+        Shipment.builder()
+            .destination(destination)
+            .customerId(customerData.getId())
+            .orderId(startShipmentEvent.getOrderId())
+            .events(startEvent(customerData.getCountry()))
+            .id(UUID.randomUUID().toString())
+            .build();
+    this.logger.info("Inserting shipment {}",shipment);
+    try{
+      this.panacheShipmentRepository.persist(shipment);
+    }catch (Exception e){
+      this.logger.error("Error to persist shipment entity",e);
+    }
+    this.logger.info("Shipment event processed successfully for order id {} customer id {}",
+        startShipmentEvent.getOrderId(),shipment.getCustomerId());
     return shipment;
   }
 
