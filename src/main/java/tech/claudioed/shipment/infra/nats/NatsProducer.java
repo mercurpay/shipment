@@ -1,6 +1,8 @@
 package tech.claudioed.shipment.infra.nats;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.nats.client.Connection;
+import io.nats.client.Dispatcher;
 import io.nats.client.Nats;
 import io.nats.client.Options;
 import java.time.Duration;
@@ -14,6 +16,7 @@ import javax.inject.Inject;
 import lombok.SneakyThrows;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
+import tech.claudioed.shipment.infra.event.StartShipmentDispatcher;
 
 @ApplicationScoped
 public class NatsProducer {
@@ -32,6 +35,12 @@ public class NatsProducer {
   @Inject
   @ConfigProperty(name = "nats.host")
   String natsHost;
+
+  @Inject
+  ObjectMapper mapper;
+
+  @Inject
+  StartShipmentMessageHandler startShipmentMessageHandler;
 
   private Connection connection;
 
@@ -63,6 +72,18 @@ public class NatsProducer {
     natsConnection();
   }
 
+  @Produces
+  @SneakyThrows
+  @ApplicationScoped
+  @StartShipmentDispatcher
+  public Dispatcher startShipmentDispatcher(@NatsConnection Connection connection){
+    this.logger.info("Setting start shipment dispatcher....");
+    final Dispatcher startShipmentDispatcher = connection.createDispatcher(this.startShipmentMessageHandler);
+    startShipmentDispatcher.subscribe("start-shipment");
+    this.logger.info("Shipment dispatcher configured successfully!!!");
+    return startShipmentDispatcher;
+  }
+
   @PreDestroy
   @SneakyThrows
   void cleanUp(){
@@ -72,6 +93,5 @@ public class NatsProducer {
       logger.info("Nats connection closed successfully");
     }
   }
-
 
 }

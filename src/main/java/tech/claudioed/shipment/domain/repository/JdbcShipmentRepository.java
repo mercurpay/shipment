@@ -31,6 +31,9 @@ public class JdbcShipmentRepository implements ShipmentRepository {
   @Inject
   Logger logger;
 
+  @Inject
+  PanacheShipmentRepository panacheShipmentRepository;
+
   @SneakyThrows
   public Shipment create(StartShipmentEvent startShipmentEvent){
     this.logger.info("Starting shipment for order {} ",startShipmentEvent);
@@ -44,7 +47,11 @@ public class JdbcShipmentRepository implements ShipmentRepository {
     final Shipment shipment = Shipment.builder().id(UUID.randomUUID().toString())
         .destination(destination).customerId(customerData.getId())
         .orderId(startShipmentEvent.getOrderId()).events(startEvent(customerData.getCountry())).build();
-    shipment.persist();
+    try{
+      this.panacheShipmentRepository.persist(shipment);
+    }catch (Exception e){
+      logger.error("Error to persist shipment",e);
+    }
     this.logger.info("Shipment event processed successfully for order id {} shipment id {}",
         startShipmentEvent.getOrderId(),shipment.getId());
     return shipment;
