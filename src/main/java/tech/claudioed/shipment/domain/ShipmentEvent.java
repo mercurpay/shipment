@@ -1,31 +1,34 @@
 package tech.claudioed.shipment.domain;
 
-import javax.persistence.Embeddable;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bson.Document;
 
-/**
- * @author claudioed on 2019-04-21.
- * Project shipment
- */
+/** @author claudioed on 2019-04-21. Project shipment */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-public class ShipmentEvent {
+public class ShipmentEvent implements MongoDocument {
 
-  @Id
   private String id;
-
-  @Embedded
-  private Movement movement;
 
   private String action;
 
+  private Movement movement;
+
+  @Override
+  public Document toDoc() {
+    return new Document()
+        .append("_id", this.id)
+        .append("action", this.action)
+        .append("movement", this.movement.toDoc());
+  }
+
+  @Override
+  public Object fromDoc(Document doc) {
+    return null;
+  }
 }

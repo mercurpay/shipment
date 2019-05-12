@@ -1,6 +1,10 @@
 package tech.claudioed.shipment.domain.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.MongoClient;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -8,6 +12,8 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import lombok.SneakyThrows;
+import org.bson.Document;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import tech.claudioed.shipment.domain.Destination;
 import tech.claudioed.shipment.domain.Movement;
@@ -19,7 +25,7 @@ import tech.claudioed.shipment.domain.resources.data.StartShipmentEvent;
 
 /** @author claudioed on 2019-04-14. Project shipment */
 @ApplicationScoped
-public class JdbcShipmentRepository implements ShipmentRepository {
+public class MongoShipmentRepository implements ShipmentRepository {
 
   private static final String FROM_CITY = "New York";
 
@@ -32,7 +38,11 @@ public class JdbcShipmentRepository implements ShipmentRepository {
   Logger logger;
 
   @Inject
-  PanacheShipmentRepository panacheShipmentRepository;
+  @ConfigProperty(name = "mongo.database",defaultValue = "SHIPMENT")
+  String database;
+
+  @Inject
+  MongoClient mongoClient;
 
   @SneakyThrows
   public Shipment create(StartShipmentEvent startShipmentEvent){
@@ -48,7 +58,9 @@ public class JdbcShipmentRepository implements ShipmentRepository {
         .destination(destination).customerId(customerData.getId())
         .orderId(startShipmentEvent.getOrderId()).events(startEvent(customerData.getCountry())).build();
     try{
-      this.panacheShipmentRepository.persist(shipment);
+      final MongoDatabase db = this.mongoClient.getDatabase(this.database);
+      final MongoCollection<Document> dbCollection = db.getCollection("shipments");
+      dbCollection.insertOne(shipment.toDoc());
     }catch (Exception e){
       logger.error("Error to persist shipment",e);
     }
@@ -60,9 +72,14 @@ public class JdbcShipmentRepository implements ShipmentRepository {
   @Override
   public Shipment find(String id) {
     this.logger.info("Finding shipment id {}",id);
-    final Shipment shipment = Shipment.findById(id);
-    this.logger.info("Loaded shipment data {}",shipment);
-    return shipment;
+    final MongoDatabase db = this.mongoClient.getDatabase(this.database);
+    final MongoCollection<Document> dbCollection = db.getCollection("shipments");
+    final FindIterable<Document> documents = dbCollection.find(new Document("_id", id));
+    final Document first = documents.first();
+
+
+
+    return null;
   }
 
   private List<ShipmentEvent> startEvent(String country){

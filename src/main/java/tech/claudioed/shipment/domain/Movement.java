@@ -1,45 +1,35 @@
 package tech.claudioed.shipment.domain;
 
 import java.time.LocalDateTime;
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Embedded;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bson.Document;
 
-/**
- * @author claudioed on 2019-04-13.
- * Project shipment
- */
+/** @author claudioed on 2019-04-13. Project shipment */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Embeddable
-public class Movement {
+public class Movement implements MongoDocument<Movement> {
 
   private LocalDateTime at;
 
-  @Embedded
-  @AttributeOverrides({
-      @AttributeOverride(name = "name", column = @Column(name = "from_name")),
-      @AttributeOverride(name = "city", column = @Column(name = "from_city")),
-      @AttributeOverride(name = "country", column = @Column(name = "from_country"))
-  })
   private Place from;
 
-  @Embedded
-  @AttributeOverrides({
-      @AttributeOverride(name = "name", column = @Column(name = "to_name")),
-      @AttributeOverride(name = "city", column = @Column(name = "to_city")),
-      @AttributeOverride(name = "country", column = @Column(name = "to_country"))
-  })
   private Place to;
 
-}
+  @Override
+  public Document toDoc() {
+    return new Document()
+        .append("at", this.at.toString())
+        .append("from", this.from.toDoc())
+        .append("to", this.to.toDoc());
+  }
 
+  @Override
+  public Movement fromDoc(Document doc) {
+    return null;
+  }
+}

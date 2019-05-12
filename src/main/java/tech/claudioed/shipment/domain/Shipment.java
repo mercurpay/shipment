@@ -1,47 +1,46 @@
 package tech.claudioed.shipment.domain;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.bson.Document;
 
-/**
- * @author claudioed on 2019-04-13.
- * Project shipment
- */
-
+/** @author claudioed on 2019-04-13. Project shipment */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-@Entity
-public class Shipment extends PanacheEntityBase {
+public class Shipment implements MongoDocument<Shipment> {
 
-  @Id
   private String id;
 
   private String orderId;
 
   private String customerId;
 
-  @Embedded
   private Destination destination;
 
-  @OneToMany(cascade= CascadeType.ALL, fetch = FetchType.LAZY)
   private List<ShipmentEvent> events;
 
-  public ShipmentEvent firstEvent(){
+  public ShipmentEvent firstEvent() {
     return this.events.get(0);
   }
 
+  public Document toDoc() {
+    return new Document()
+        .append("_id", this.id)
+        .append("orderId", this.orderId)
+        .append("customerId", this.customerId)
+        .append("destination", this.destination.toDoc())
+        .append("events", this.events.stream().map(ShipmentEvent::toDoc));
+  }
+
+  @Override
+  public Shipment fromDoc(Document doc) {
+
+
+    return null;
+  }
 }

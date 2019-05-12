@@ -1,26 +1,30 @@
 package tech.claudioed.shipment.domain;
 
-import javax.persistence.Embeddable;
-import javax.persistence.Embedded;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bson.Document;
 
-/**
- * @author claudioed on 2019-04-13.
- * Project shipment
- */
+/** @author claudioed on 2019-04-13. Project shipment */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Embeddable
-public class Destination {
+public class Destination implements MongoDocument<Destination> {
 
   private String address;
 
-  @Embedded
   private Place place;
+
+  @Override
+  public Document toDoc() {
+    return new Document().append("address", this.address).append("place", this.place.toDoc());
+  }
+
+  @Override
+  public Destination fromDoc(Document doc) {
+    return null;
+  }
 
 }
